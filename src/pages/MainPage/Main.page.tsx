@@ -1,7 +1,22 @@
 import Sliders from "../../features/Sliders/Sliders.tsx";
 import {SwiperSlide} from "swiper/react";
+import {useEffect, useState} from "react";
+import $api from "../../axios";
+import {IPhoto} from "../../types";
 
 const MainPage = () => {
+
+    const [photos, setPhotos] = useState<IPhoto[]>([]);
+
+    const getPhotos = async () => {
+        const photosArr = await $api.get('/photos');
+        setPhotos(photosArr.data)
+    }
+
+    useEffect(() => {
+        getPhotos()
+    }, []);
+
     return (
         <div>
             <Sliders slidesCount={1}>
@@ -23,6 +38,15 @@ const MainPage = () => {
                 <SwiperSlide>Slide 30</SwiperSlide>
                 <SwiperSlide>Slide 40</SwiperSlide>
             </Sliders>
+
+            <div>
+                {photos.map(photo => (
+                    <div key={photo.id}>
+                        <img src={photo.urls.regular}/>
+                    </div>
+                ))}
+
+            </div>
         </div>
     );
 };
